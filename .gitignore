@@ -1,0 +1,21 @@
+# IDE generated
+TestResults
+.vs/
+
+# User config
+*.suo
+*.csproj.user
+*.vcxproj.user
+_NCrunch_*
+*.ncrunchproject
+*.ncrunchsolution
+
+# Binary files
+bin/
+Bin/
+obj/
+*.class
+packages/
+
+*.log
+*.tmp.dockerfile

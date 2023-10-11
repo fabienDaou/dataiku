@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MilleniumFalconChallenge.CmdLine": {
+      "commandName": "Project",
+      "commandLineArgs": "toto.json tata.json"
+    }
+  }
+}
