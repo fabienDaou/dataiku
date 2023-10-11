@@ -1,4 +1,4 @@
-﻿namespace MilleniumFalconChallenge
+namespace MilleniumFalconChallenge
 {
     public interface IScenarioRunner
     {

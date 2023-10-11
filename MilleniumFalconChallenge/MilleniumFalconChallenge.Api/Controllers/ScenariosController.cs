@@ -48,11 +48,14 @@ namespace MilleniumFalconChallenge.Api.Controllers
                 dto.Countdown,
                 dto.BountyHunters.Select(b => new BountyHunter(b.Planet, b.Day)).ToArray());
 
-            var id = await _newScenarioHandler.HandleAsync(newScenario);
+            var result = await _newScenarioHandler.HandleAsync(newScenario);
 
-            return id is not null
-                ? Ok(new CreateScenarioResponse(id.Value))
-                : StatusCode((int)HttpStatusCode.InternalServerError);
+            return result switch
+            {
+                INewScenarioHandler.Success s => Ok(s.Id),
+                INewScenarioHandler.InvalidScenario i => BadRequest(i.Message),
+                _ => StatusCode((int)HttpStatusCode.InternalServerError)
+            };
         }
     }
 }

@@ -7,6 +7,6 @@ namespace MilleniumFalconChallenge.Api.Controllers
         [Required] int Countdown,
         [Required] CreateScenarioRequest.BountyHunter[] BountyHunters)
     {
-        public record BountyHunter([Required][MaxLength(512)] string Planet, [Required][Range(1, int.MaxValue)] int Day);
+        public record BountyHunter([Required][MaxLength(512)] string Planet, [Required] int Day);
     }
 }

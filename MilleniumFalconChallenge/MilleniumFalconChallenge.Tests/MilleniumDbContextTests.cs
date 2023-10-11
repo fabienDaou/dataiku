@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MilleniumFalconChallenge.Persistence.MilleniumFalcon;
 using Xunit;
 
@@ -9,7 +10,10 @@ namespace MilleniumFalconChallenge.Tests
         public void MilleniumDbContext_WhenRoutesQueried_RoutesProperlyMapped()
         {
             // Arrange
-            var sut = new MilleniumDbContext("Data Source=universe.db");
+            var options = new DbContextOptionsBuilder<MilleniumDbContext>()
+                .UseSqlite("Data Source=universe.db")
+                .Options;
+            var sut = new MilleniumDbContext(options);
 
             // Act
             var routes = sut.Routes.ToList();

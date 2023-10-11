@@ -1,7 +1,13 @@
-﻿namespace MilleniumFalconChallenge
+namespace MilleniumFalconChallenge
 {
     public interface INewScenarioHandler
     {
-        Task<int?> HandleAsync(NewScenario scenario);
+        Task<Result> HandleAsync(NewScenario scenario);
+
+        public abstract record Result;
+
+        public record InvalidScenario(string Message) : Result;
+        public record UnexpectedError : Result;
+        public record Success(int Id) : Result;
     }
 }
