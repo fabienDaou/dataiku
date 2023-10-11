@@ -21,4 +21,4 @@ jobs:
     - name: Build
       run: dotnet build -c Release --no-restore ./MilleniumFalconChallenge/MilleniumFalconChallenge.sln
     - name: Test
-      run: dotnet test ./MilleniumFalconChallenge/MilleniumFalconChallenge.sln --no-build --verbosity normal
+      run: dotnet test ./MilleniumFalconChallenge/MilleniumFalconChallenge.sln
