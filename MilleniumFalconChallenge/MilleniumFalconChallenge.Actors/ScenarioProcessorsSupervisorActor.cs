@@ -81,19 +81,20 @@ namespace MilleniumFalconChallenge.Actors
 
             ReceiveAsync<CheckScenariosToProcess>(async m =>
             {
-                var processorsAvailable = true;
-                while (_scenariosQueue.Count > 0 && processorsAvailable)
+                for (var i = 0; i < _processorRefs.Count; i++)
                 {
-                    for (var i = 0; i < _processorRefs.Count; i++)
+                    if (_scenariosQueue.Count <= 0)
                     {
-                        var processorRef = _processorRefs[i];
-                        var scenario = _scenariosQueue.Peek();
-                        var response = await processorRef.Ask<StartProcessResponse>(new StartProcessCommand(scenario));
-                        if (response.Accepted)
-                        {
-                            _scenariosQueue.Dequeue();
-                            _logger.LogInformation("Scenario '{Name}' sent for processing.", scenario.Name);
-                        }
+                        break;
+                    }
+
+                    var processorRef = _processorRefs[i];
+                    var scenario = _scenariosQueue.Peek();
+                    var response = await processorRef.Ask<StartProcessResponse>(new StartProcessCommand(scenario));
+                    if (response.Accepted)
+                    {
+                        _scenariosQueue.Dequeue();
+                        _logger.LogInformation("Scenario '{Name}' sent for processing.", scenario.Name);
                     }
                 }
 
