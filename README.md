@@ -1,4 +1,4 @@
-![Build/test](https://github.com/github/docs/actions/workflows/dotnet.yml/badge.svg)
+![Build/test](https://github.com/fabienDaou/dataiku/actions/workflows/dotnet.yml/badge.svg)
 
 # What I wanted to demonstrate with this test
 - Build a solution that meets the minimum setup bar of what I consider a professional project.
