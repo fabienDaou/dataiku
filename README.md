@@ -14,6 +14,8 @@ CLI code is in MilleniumFalconChallenge/MilleniumFalconChallenge.CmdLine folder.
 They share libraries (these are the other folders).
 
 SPA code is in MilleniumFalconChallenge/MilleniumFalconChallenge.Api/Client folder.
+## CI
+I used github actions, they build and run backend tests on each commit. See in **.github/workflows/dotnet.yml**.
 
 # What I wanted to demonstrate with this test
 - Build a solution that meets the minimum setup bar of what I consider a professional project.
