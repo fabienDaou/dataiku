@@ -9,11 +9,10 @@ docker-compose up
 Then you can access the web app at **http://localhost:38190/**
 ## CLI
 ## Code
-Webapp code is in MilleniumFalconChallenge/MilleniumFalconChallenge.Api folder.
-CLI code is in MilleniumFalconChallenge/MilleniumFalconChallenge.CmdLine folder.
+- **Webapp** code is in **MilleniumFalconChallenge/MilleniumFalconChallenge.Api** folder.
+- **CLI** code is in **MilleniumFalconChallenge/MilleniumFalconChallenge.CmdLine** folder.
 They share libraries (these are the other folders).
-
-SPA code is in MilleniumFalconChallenge/MilleniumFalconChallenge.Api/Client folder.
+- **SPA** code is in **MilleniumFalconChallenge/MilleniumFalconChallenge.Api/Client** folder.
 ## CI
 I used github actions, they build and run backend tests on each commit. See in **.github/workflows/dotnet.yml**.
 
