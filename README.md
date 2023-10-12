@@ -47,11 +47,17 @@ Because I used EntityFramework, it would be easy to configure another relational
 In the same spirit, database access is done in classes implementing interfaces. In case, we need to evolve to another kind of persistence (NoSQL database, MongoDb for example). Implementation would be pretty trivial.
 
 # Some thoughts about future development
+## Frontend
+### Dynamic refresh
+At the moment, user needs to refresh the page to check if processing is done. Use websocket to update probability.
+### Frontend composability
+I created two views and some components. In the eventuality, there is mode development made on this project, it would be interesting about thinking about building a design system for this application -> more consistence and reusability.
 ## Towards a distributed system
 **In the current situation, the supervisor is a SPOF (single point of failure).**
 In Akka cluster, this is a singleton. The reality is that the migration of this singleton actor from one instance to the other is almost instant (by experience, it is a matter of ms), plus it seems (would have to test) there is some level of buffering of messages that could not be posted so no message are lost.
 
 To completely remedy the issue, we can think of using a dedicated system (Redis as a queue for example) to keep the queue and several supervisors could pick up work in this queue making it more resilient.
+
 
 ## Multi tenancy
 At the moment, there is no authentication or authorization. Every users see the scenarios of all the other users. This leads to a lot of things to consider, especially regarding security.

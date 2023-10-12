@@ -1,4 +1,4 @@
-﻿namespace MilleniumFalconChallenge.Persistence.Scenarios
+namespace MilleniumFalconChallenge.Persistence.Scenarios
 {
     public static class EntityExtensions
     {

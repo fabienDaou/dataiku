@@ -67,9 +67,19 @@ namespace MilleniumFalconChallenge.Persistence.Scenarios
             return scenarioEntity.ToDomain();
         }
 
-        public Task<bool> UpdateProbabilityAsync(Scenario scenario, double probability)
+        public async Task<bool> UpdateProbabilityAsync(Scenario scenario, double probability)
         {
-            return Task.FromResult(false);
+            using var context = await _contextFactory.CreateDbContextAsync();
+            context.Scenarios.Update(new ScenarioEntity
+            {
+                Id = scenario.Id,
+                Name = scenario.Name,
+                Countdown = scenario.Countdown,
+                SuccessProbability = probability
+            });
+            await context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

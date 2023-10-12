@@ -56,12 +56,26 @@ builder.Services.AddSwaggerGen(options =>
     options.CustomSchemaIds(s => s.FullName.Replace("+", "."));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "allowDev",
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin().WithMethods(
+                            HttpMethod.Get.Method,
+                            HttpMethod.Put.Method,
+                            HttpMethod.Post.Method,
+                            HttpMethod.Delete.Method).AllowAnyHeader();
+                      });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("allowDev");
 }
 
 app.UseHttpsRedirection();

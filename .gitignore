@@ -1,6 +1,7 @@
 # IDE generated
 TestResults
 .vs/
+.vscode/
 
 # User config
 *.suo
