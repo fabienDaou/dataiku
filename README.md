@@ -1,11 +1,19 @@
 ![Build/test](https://github.com/fabienDaou/dataiku/actions/workflows/dotnet.yml/badge.svg)
 
-# How to run the webapp
+# General informations
+## WebApp
 At the root of the repository:
 ```
 docker-compose up
 ```
 Then you can access the web app at **http://localhost:38190/**
+## CLI
+## Code
+Webapp code is in MilleniumFalconChallenge/MilleniumFalconChallenge.Api folder.
+CLI code is in MilleniumFalconChallenge/MilleniumFalconChallenge.CmdLine folder.
+They share libraries (these are the other folders).
+
+SPA code is in MilleniumFalconChallenge/MilleniumFalconChallenge.Api/Client folder.
 
 # What I wanted to demonstrate with this test
 - Build a solution that meets the minimum setup bar of what I consider a professional project.
@@ -37,7 +45,7 @@ Table BountyHunter (Id:PK, Planet:string, Day:int)
 BountyHunter has a ForeignKey constraint on Scenario:Id.
 ```
 
-**For simplicity**, this is an in-memory relational database, so if you restart the webapp, you will lose your scenarios. Because I used a well known ORM (EntityFramework), it is easy to use a different relational database. However, this prevents me from creating relations between the routes and the planets of the bounty hunters which could lead to invalid scenarios being accepted (scenario with an unknown planet). I added validation for this, but in a context of a team or simply the addition of a bug in the validation it could lead to corrupt data (unit tests help here have some guarantee).
+**For simplicity**, this is an in-memory relational database, so if you restart the webapp, you will lose your scenarios. Because I used a well known ORM (EntityFramework), it is easy to use a different relational database. However, this prevents me from creating relations between the routes and the planets of the bounty hunters which could lead to invalid scenarios being accepted (scenario with an unknown planet). I added validation for this, but in a context of a team or simply the addition of a bug in the validation it could lead to corrupt data (unit tests help here to have some guarantee).
 
 # Technologies used
 ## WebServer
@@ -45,7 +53,11 @@ AspNetCore, .Net6
 Akka .Net
 Entity Framework (ORM)
 ## Front
-Vue3 (VueRouter for view navigation, Vuex for state management), TypeScript
+Vue3
+VueRouter, for view navigation
+Vuex, for state management
+Vuetify, component library
+TypeScript
 
 ## Backend architecture
 This is a monolithic application.
@@ -61,14 +73,15 @@ Api allows pagination, but I did not handle it in the front. I just specified a 
 At the moment, I do polling every two seconds to get the latest updates regarding scenarios.
 We could use WebSocket later on.
 ### Frontend composability
-I created two views and some components. In the eventuality, there is mode development made on this project, it would be interesting about thinking about building a design system for this application -> more consistence and reusability.
-## Towards a distributed system
+I created two views and some components. In the eventuality, there is mode development made on this project, it would be interesting thinking about building a design system for this application -> more consistence and reusability.
+## Backend
+### Error handling
+There is a lack of proper error handling. I focused more on validation of inputs rather than error handling as it is quite time consuming.
+### Towards a distributed system
 **In the current situation, the supervisor is a SPOF (single point of failure).**
-In Akka cluster, this is a singleton. The reality is that the migration of this singleton actor from one instance to the other is almost instant (by experience, it is a matter of ms), plus it seems (would have to test) there is some level of buffering of messages that could not be posted so no message are lost.
+In Akka cluster, this is a singleton. The reality is that the migration of this singleton actor from one instance to the other is almost instant (by experience, it is a matter of ms), plus it seems (would have to test) there is some level of buffering of messages that could not be posted so no messages are lost.
 
 To completely remedy the issue, we can think of using a dedicated system (Redis as a queue for example) to keep the queue and several supervisors could pick up work in this queue making it more resilient.
-
-
 ## Multi tenancy
 At the moment, there is no authentication or authorization. Every users see the scenarios of all the other users. This leads to a lot of things to consider, especially regarding security.
 
