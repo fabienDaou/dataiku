@@ -4,16 +4,16 @@ using Xunit;
 
 namespace MilleniumFalconChallenge.Tests
 {
-    public class MilleniumDbContextTests
+    public class RoutesDbContextTests
     {
         [Fact]
-        public void MilleniumDbContext_WhenRoutesQueried_RoutesProperlyMapped()
+        public void RoutesDbContext_WhenRoutesQueried_RoutesProperlyMapped()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<MilleniumDbContext>()
+            var options = new DbContextOptionsBuilder<RoutesDbContext>()
                 .UseSqlite("Data Source=universe.db")
                 .Options;
-            var sut = new MilleniumDbContext(options);
+            var sut = new RoutesDbContext(options);
 
             // Act
             var routes = sut.Routes.ToList();

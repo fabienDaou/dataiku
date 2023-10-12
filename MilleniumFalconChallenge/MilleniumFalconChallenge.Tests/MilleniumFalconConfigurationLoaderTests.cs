@@ -1,4 +1,4 @@
-﻿using AutoFixture.Xunit2;
+using AutoFixture.Xunit2;
 using Microsoft.Extensions.Logging.Abstractions;
 using MilleniumFalconChallenge.Persistence.MilleniumFalcon;
 using Xunit;
@@ -36,7 +36,7 @@ namespace MilleniumFalconChallenge.Tests
 
                 // Assert
                 Assert.NotNull(result);
-                Assert.Equal((uint)6, result.Autonomy);
+                Assert.Equal(6, result.Autonomy);
                 Assert.Equal("Tatooine", result.Departure);
                 Assert.Equal("Endor", result.Arrival);
                 Assert.Equal("universe.db", result.RoutesDbPath);
@@ -69,7 +69,7 @@ namespace MilleniumFalconChallenge.Tests
 
         [Theory]
         [AutoData]
-        public async Task Load_NotAnAbsolutePath_ReturnsNull(Guid guid)
+        public async Task Load_RelativeToCurrentDirectory_PropertiesWellSet(Guid guid)
         {
             // Arrange
             var configuration = @"
@@ -96,7 +96,11 @@ namespace MilleniumFalconChallenge.Tests
                 var result = sut.Load(Path.GetRelativePath(Environment.CurrentDirectory, path));
 
                 // Assert
-                Assert.Null(result);
+                Assert.NotNull(result);
+                Assert.Equal(6, result.Autonomy);
+                Assert.Equal("Tatooine", result.Departure);
+                Assert.Equal("Endor", result.Arrival);
+                Assert.Equal("universe.db", result.RoutesDbPath);
             }
             finally
             {

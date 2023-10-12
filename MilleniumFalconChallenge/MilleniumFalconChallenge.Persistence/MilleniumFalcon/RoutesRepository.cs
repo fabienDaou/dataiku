@@ -4,9 +4,9 @@ namespace MilleniumFalconChallenge.Persistence.MilleniumFalcon
 {
     public class RoutesRepository : IReadOnlyRoutesRepository
     {
-        private readonly IDbContextFactory<MilleniumDbContext> _contextFactory;
+        private readonly IDbContextFactory<RoutesDbContext> _contextFactory;
 
-        public RoutesRepository(IDbContextFactory<MilleniumDbContext> contextFactory)
+        public RoutesRepository(IDbContextFactory<RoutesDbContext> contextFactory)
         {
             _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
         }

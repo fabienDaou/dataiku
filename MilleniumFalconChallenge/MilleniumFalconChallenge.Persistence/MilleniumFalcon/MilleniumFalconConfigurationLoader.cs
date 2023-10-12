@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace MilleniumFalconChallenge.Persistence.MilleniumFalcon
@@ -17,8 +17,8 @@ namespace MilleniumFalconChallenge.Persistence.MilleniumFalcon
         {
             if (!Path.IsPathRooted(path))
             {
-                _logger.LogError("Expected an absolute path for the millenium configuration file, but got '{Path}'.", path);
-                return null;
+                path = Path.Combine(Environment.CurrentDirectory, path);
+                _logger.LogInformation("Relative path passed for the millenium configuration file, absolute path is '{Path}'.", path);
             }
 
             if (!File.Exists(path))

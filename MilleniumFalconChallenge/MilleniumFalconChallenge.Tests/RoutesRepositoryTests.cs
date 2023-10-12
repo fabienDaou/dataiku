@@ -26,14 +26,14 @@ namespace MilleniumFalconChallenge.Tests
             Assert.Equal(exists, result);
         }
 
-        private class DbContextFactory : IDbContextFactory<MilleniumDbContext>
+        private class DbContextFactory : IDbContextFactory<RoutesDbContext>
         {
-            public MilleniumDbContext CreateDbContext()
+            public RoutesDbContext CreateDbContext()
             {
-                var options = new DbContextOptionsBuilder<MilleniumDbContext>()
+                var options = new DbContextOptionsBuilder<RoutesDbContext>()
                     .UseSqlite("Data Source=universe.db")
                     .Options;
-                return new MilleniumDbContext(options);
+                return new RoutesDbContext(options);
             }
         }
     }

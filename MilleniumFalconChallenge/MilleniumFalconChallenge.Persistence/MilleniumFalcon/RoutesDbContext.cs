@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MilleniumFalconChallenge.Persistence.MilleniumFalcon
 {
-    public class MilleniumDbContext : DbContext
+    public class RoutesDbContext : DbContext
     {
         public DbSet<Route> Routes { get; set; }
 
-        public MilleniumDbContext(DbContextOptions<MilleniumDbContext> options) : base(options)
+        public RoutesDbContext(DbContextOptions<RoutesDbContext> options) : base(options)
         {
         }
 

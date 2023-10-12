@@ -4,7 +4,7 @@ using Microsoft.Extensions.FileProviders;
 using MilleniumFalconChallenge;
 using MilleniumFalconChallenge.Actors;
 using MilleniumFalconChallenge.Domain;
-using MilleniumFalconChallenge.Domain.Noop;
+using MilleniumFalconChallenge.Domain.Runners;
 using MilleniumFalconChallenge.Persistence.MilleniumFalcon;
 using MilleniumFalconChallenge.Persistence.Scenarios;
 
@@ -14,9 +14,25 @@ var pathToDistDirectory = Path.Combine("Client", "MilleniumFalconChallenge", "di
 
 // todo replace noop
 builder.Services.AddDbContextFactory<ScenarioDbContext>(options => options.UseInMemoryDatabase("scenarios"));
-builder.Services.AddDbContextFactory<MilleniumDbContext>(options => options.UseSqlite("Data Source=universe.db"));
+builder.Services.AddDbContextFactory<RoutesDbContext>((sp, options) =>
+{
+    var conf = sp.GetRequiredService<MilleniumFalconConfiguration>();
+    options.UseSqlite($"Data Source={conf.RoutesDbPath}");
+});
 
-builder.Services.AddSingleton<IScenarioRunner, NoopScenarioRunner>();
+builder.Services.AddSingleton(sp =>
+{
+    var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+    MilleniumFalconConfigurationLoader loader = new(loggerFactory);
+    var path = sp.GetRequiredService<IConfiguration>().GetValue<string>("MilleniumFalconPath");
+    return loader.Load(path) ?? throw new ArgumentNullException("Millenium Falcon configuration is null.");
+});
+builder.Services.AddSingleton(sp =>
+{
+    var conf = sp.GetRequiredService<MilleniumFalconConfiguration>();
+    return new MilleniumFalconInformation(conf.Autonomy, conf.Departure, conf.Arrival);
+});
+builder.Services.AddSingleton<IScenarioRunner, DijkstraScenarioRunner>();
 builder.Services.AddSingleton<ScenarioRepository, ScenarioRepository>();
 builder.Services.AddSingleton<IReadOnlyScenarioRepository, ScenarioRepository>();
 builder.Services.AddSingleton<IScenarioRepository, ScenarioRepository>();
