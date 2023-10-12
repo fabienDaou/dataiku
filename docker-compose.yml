@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  milleniumfalconchallenge-svc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: milleniumfalconchallenge
+    container_name: milleniumfalconchallenge-ctn
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:38190
+    ports:
+      - 38190:38190

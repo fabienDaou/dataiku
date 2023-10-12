@@ -1,15 +1,5 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer">
-      <v-sheet color="grey-lighten-4" class="pa-4">
-        <v-avatar class="mb-4" color="grey-darken-1" size="64">
-          <v-icon icon="mdi-account-circle"></v-icon>
-        </v-avatar>
-
-        <div>{{ playerName }}</div>
-      </v-sheet>
-    </v-navigation-drawer>
-
     <v-main>
       <v-container class="py-8 px-6" fluid>
         <v-row>
@@ -17,24 +7,14 @@
             <ImportScenarioCard />
           </v-col>
           <v-col v-for="scenario in scenarios" :key="scenario.name" cols="12">
-            <ScenarioCard
-              :name="scenario.name"
-              :countdown="scenario.countdown"
-              :probability="scenario.probability"
-              :bountyHunters="scenario.bountyHunters"
-            />
+            <ScenarioCard :name="scenario.name" :countdown="scenario.countdown" :probability="scenario.probability"
+              :bountyHunters="scenario.bountyHunters" />
           </v-col>
         </v-row>
       </v-container>
     </v-main>
   </v-app>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const drawer = ref(null)
-</script>
 
 <script lang="ts">
 import ScenarioCard from '../components/ScenarioCard.vue'
@@ -45,9 +25,6 @@ export default {
   name: 'ScenarioViews',
   components: { ScenarioCard, ImportScenarioCard },
   computed: {
-    playerName(): string {
-      return this.$store.state.playerName
-    },
     scenarios(): Scenario[] {
       return (this.$store.state as AppState).scenarios.sort((s1, s2) => {
         if (s1.id == null) {
@@ -66,7 +43,10 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('getScenariosAsync')
+    let that = this;
+    window.setInterval(() => {
+      that.$store.dispatch('getScenariosAsync')
+    }, 2000);
   }
 }
 </script>

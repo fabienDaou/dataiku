@@ -1,5 +1,12 @@
 ![Build/test](https://github.com/fabienDaou/dataiku/actions/workflows/dotnet.yml/badge.svg)
 
+# How to run the webapp
+At the root of the repository:
+```
+docker-compose up
+```
+Then you can access the web app at **http://localhost:38190/**
+
 # What I wanted to demonstrate with this test
 - Build a solution that meets the minimum setup bar of what I consider a professional project.
     - Code Versioning
@@ -38,7 +45,7 @@ AspNetCore, .Net6
 Akka .Net
 Entity Framework (ORM)
 ## Front
-Vue3, TypeScript
+Vue3 (VueRouter for view navigation, Vuex for state management), TypeScript
 
 ## Backend architecture
 This is a monolithic application.
@@ -46,10 +53,13 @@ Details about the scenarios are stored in an in memory database.
 Because I used EntityFramework, it would be easy to configure another relational database.
 In the same spirit, database access is done in classes implementing interfaces. In case, we need to evolve to another kind of persistence (NoSQL database, MongoDb for example). Implementation would be pretty trivial.
 
-# Some thoughts about future development
+# Limitations and thoughts about future development
 ## Frontend
-### Dynamic refresh
-At the moment, user needs to refresh the page to check if processing is done. Use websocket to update probability.
+### Pagination
+Api allows pagination, but I did not handle it in the front. I just specified a large page size.
+### WebSocket instead of polling
+At the moment, I do polling every two seconds to get the latest updates regarding scenarios.
+We could use WebSocket later on.
 ### Frontend composability
 I created two views and some components. In the eventuality, there is mode development made on this project, it would be interesting about thinking about building a design system for this application -> more consistence and reusability.
 ## Towards a distributed system

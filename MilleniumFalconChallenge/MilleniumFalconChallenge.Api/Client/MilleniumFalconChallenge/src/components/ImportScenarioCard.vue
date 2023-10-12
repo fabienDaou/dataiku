@@ -2,9 +2,8 @@
   <v-card class="mx-auto" max-width="800" variant="outlined">
     <v-card-item>
       <div>
-        <div class="text-h3 mb-1">Import another scenario</div>
+        <div class="text-h3 mb-1">Import another scenario, {{ playerName }}</div>
       </div>
-      <v-card-subtitle v-if="invalidFile">Invalid json structure</v-card-subtitle>
     </v-card-item>
 
     <v-card-text>
@@ -17,6 +16,7 @@
         label="Import a scenario"
         accept="application/json"
       ></v-file-input>
+      <v-card-subtitle v-if="invalidFile">Invalid json structure</v-card-subtitle>
     </v-card-text>
   </v-card>
 </template>
@@ -43,6 +43,11 @@ export default {
       scenarioName: ''
     }
   },
+  computed: {
+    playerName(): string {
+      return this.$store.state.playerName
+    }
+  },
   methods: {
     submit(files: Blob[]) {
       if (files.length == 0) {
@@ -53,6 +58,8 @@ export default {
       const reader = new FileReader()
       reader.onload = function (event: ProgressEvent<FileReader>) {
         if (event.target == null || event.target.result == null) {
+          that.files = []
+          that.scenarioName = ''
           return
         }
         const scenarioAsString = event.target.result as string
@@ -74,6 +81,9 @@ export default {
             })
           })
         }
+
+        that.files = []
+        that.scenarioName = ''
       }
       reader.readAsText(files[0])
     }

@@ -1,5 +1,6 @@
 using Akka.Actor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using MilleniumFalconChallenge;
 using MilleniumFalconChallenge.Actors;
 using MilleniumFalconChallenge.Domain;
@@ -8,6 +9,8 @@ using MilleniumFalconChallenge.Persistence.MilleniumFalcon;
 using MilleniumFalconChallenge.Persistence.Scenarios;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var pathToDistDirectory = Path.Combine("Client", "MilleniumFalconChallenge", "dist");
 
 // todo replace noop
 builder.Services.AddDbContextFactory<ScenarioDbContext>(options => options.UseInMemoryDatabase("scenarios"));
@@ -51,37 +54,51 @@ builder.Services.AddSingleton<INewScenarioHandler>(s =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSpaStaticFiles(options => options.RootPath = pathToDistDirectory);
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(s => s.FullName.Replace("+", "."));
 });
 
-builder.Services.AddCors(options =>
+if (builder.Environment.IsDevelopment())
 {
-    options.AddPolicy(name: "allowDev",
-                      policy =>
-                      {
-                          policy.AllowAnyOrigin().WithMethods(
-                            HttpMethod.Get.Method,
-                            HttpMethod.Put.Method,
-                            HttpMethod.Post.Method,
-                            HttpMethod.Delete.Method).AllowAnyHeader();
-                      });
-});
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: "allowDev",
+                          policy =>
+                          {
+                              policy.AllowAnyOrigin().WithMethods(
+                                HttpMethod.Get.Method,
+                                HttpMethod.Put.Method,
+                                HttpMethod.Post.Method,
+                                HttpMethod.Delete.Method).AllowAnyHeader();
+                          });
+    });
+}
 
 var app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
     app.UseCors("allowDev");
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+else
+{
+    StaticFileOptions staticFileOptions = new()
+    {
+        FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, pathToDistDirectory))
+    };
+    app.UseStaticFiles(staticFileOptions);
+}
 
 app.MapControllers();
+
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = pathToDistDirectory;
+});
 
 app.Run();

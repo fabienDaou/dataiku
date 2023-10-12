@@ -46,7 +46,7 @@ const store = createStore<AppState>({
   },
   actions: {
     async getScenariosAsync({ commit }: { commit: Function }) {
-      const url = 'https://localhost:7123/api/scenarios?page=1&pageSize=100'
+      const url = '/api/scenarios?page=1&pageSize=100000'
       const response = await fetch(url, { method: 'GET' })
       if (response.ok) {
         const body: { total: number; scenarios: [] } = await response.json()
@@ -55,7 +55,7 @@ const store = createStore<AppState>({
       }
     },
     async createScenarioAsync({ commit }: { commit: Function }, scenario: any) {
-      const url = 'https://localhost:7123/api/scenarios'
+      const url = '/api/scenarios'
       const response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify(scenario),
