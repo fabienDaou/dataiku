@@ -3,10 +3,17 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # Install node
-RUN apt-get update -yq \
-    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install curl gnupg nodejs -yq --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+RUN set -uex; \
+    apt-get update; \
+    apt-get install -y ca-certificates curl gnupg; \
+    mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+     | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    NODE_MAJOR=18; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main" \
+     > /etc/apt/sources.list.d/nodesource.list; \
+    apt-get update; \
+    apt-get install nodejs -y;
 
 COPY MilleniumFalconChallenge/. .
 
