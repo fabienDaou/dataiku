@@ -9,13 +9,15 @@
     <v-card-text>
       <v-text-field label="Scenario name" variant="outlined" v-model="scenarioName"></v-text-field>
       <v-file-input
-        v-model="files"
-        density="compact"
-        variant="outlined"
-        prepend-icon=""
-        label="Import a scenario"
-        accept="application/json"
+      v-model="files"
+      density="compact"
+      variant="outlined"
+      prepend-icon=""
+      label="Import a scenario"
+      accept="application/json"
+      :disabled="scenarioName.length <= 0"
       ></v-file-input>
+      <v-card-subtitle v-if="scenarioName.length <= 0">Specify name for your scenario</v-card-subtitle>
       <v-card-subtitle v-if="invalidFile">Invalid json structure</v-card-subtitle>
     </v-card-text>
   </v-card>
