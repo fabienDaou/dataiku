@@ -4,7 +4,7 @@ namespace MilleniumFalconChallenge.Persistence.MilleniumFalcon
 {
     public class RoutesDbContext : DbContext
     {
-        public DbSet<Route> Routes { get; set; }
+        public DbSet<RouteEntity> Routes { get; set; }
 
         public RoutesDbContext(DbContextOptions<RoutesDbContext> options) : base(options)
         {
@@ -12,7 +12,7 @@ namespace MilleniumFalconChallenge.Persistence.MilleniumFalcon
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Route>().HasNoKey();
+            modelBuilder.Entity<RouteEntity>().HasNoKey();
         }
     }
 }

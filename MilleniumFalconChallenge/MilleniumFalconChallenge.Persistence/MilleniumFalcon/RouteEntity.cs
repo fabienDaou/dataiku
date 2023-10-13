@@ -3,7 +3,7 @@
 namespace MilleniumFalconChallenge.Persistence.MilleniumFalcon
 {
     [Table("routes")]
-    public class Route
+    public class RouteEntity
     {
         [Column("origin")]
         public string Origin { get; set; }

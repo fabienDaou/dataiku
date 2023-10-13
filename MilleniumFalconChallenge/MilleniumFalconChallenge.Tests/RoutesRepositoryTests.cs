@@ -26,6 +26,21 @@ namespace MilleniumFalconChallenge.Tests
             Assert.Equal(exists, result);
         }
 
+        [Fact]
+        public async Task GetRoutesAsync_WhenCalled_ReturnsAllRoutes()
+        {
+            // Arrange
+            var sut = new RoutesRepository(new DbContextFactory());
+
+            // Act
+            var result = await sut.GetRoutesAsync("Tatooine");
+
+            // Assert
+            Assert.Collection(result,
+                r1 => Assert.Equal(new Route("Tatooine", "Dagobah", 6), r1),
+                r2 => Assert.Equal(new Route("Tatooine", "Hoth", 6), r2));
+        }
+
         private class DbContextFactory : IDbContextFactory<RoutesDbContext>
         {
             public RoutesDbContext CreateDbContext()
