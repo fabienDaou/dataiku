@@ -1,5 +1,5 @@
 using MFC.Domain;
-using MFC.Domain.Noop;
+using MFC.Domain.Runners;
 using MFC.Persistence.Empire;
 using MFC.Persistence.MilleniumFalcon;
 using Microsoft.Extensions.Logging;
@@ -25,8 +25,8 @@ if (!Path.IsPathRooted(empirePath))
     empirePath = Path.Combine(Environment.CurrentDirectory, empirePath);
 }
 
-MilleniumFalconConfiguration? milleniumConfiguration = new MilleniumFalconConfigurationLoader(loggerFactory).Load(milleniumPath);
-if (milleniumConfiguration is null)
+MilleniumFalconConfiguration? conf = new MilleniumFalconConfigurationLoader(loggerFactory).Load(milleniumPath);
+if (conf is null)
 {
     Environment.Exit(1);
 }
@@ -36,11 +36,11 @@ if (empireConfiguration is null)
 {
     Environment.Exit(1);
 }
+var routesRepository = new RoutesRepository(new RoutesDbContextFactory(conf.RoutesDbPath));
+HashSetScenarioRunner runner = new(routesRepository, new(conf.Autonomy, conf.Departure, conf.Arrival), loggerFactory);
 
 var bountyHunters = empireConfiguration.BountyHunters.Select(bh => new BountyHunter(bh.Planet, bh.Day)).ToArray();
 Scenario scenario = new(1, string.Empty, empireConfiguration.Countdown, 0, bountyHunters);
-var runner = new NoopScenarioRunner(loggerFactory);
-
 var probability = await runner.RunAsync(scenario);
 
 Console.WriteLine(probability);

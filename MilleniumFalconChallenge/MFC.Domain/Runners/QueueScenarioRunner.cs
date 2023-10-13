@@ -2,24 +2,40 @@ using Microsoft.Extensions.Logging;
 
 namespace MFC.Domain.Runners
 {
-    public class ScenarioRunner : IScenarioRunner
+    public class QueueScenarioRunner : IScenarioRunner
     {
         private readonly IReadOnlyRoutesRepository _routesRepository;
         private readonly MilleniumFalconInformation _milleniumFalconInformation;
         private readonly ILogger _logger;
 
-        public ScenarioRunner(
+        public QueueScenarioRunner(
             IReadOnlyRoutesRepository routesRepository,
             MilleniumFalconInformation milleniumFalconInformation,
             ILoggerFactory loggerFactory)
         {
             _routesRepository = routesRepository ?? throw new ArgumentNullException(nameof(routesRepository));
             _milleniumFalconInformation = milleniumFalconInformation ?? throw new ArgumentNullException(nameof(milleniumFalconInformation));
-            _logger = loggerFactory?.CreateLogger<ScenarioRunner>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+            _logger = loggerFactory?.CreateLogger<HashSetScenarioRunner>() ?? throw new ArgumentNullException(nameof(loggerFactory));
         }
 
         public async Task<double> RunAsync(Scenario scenario)
         {
+            var allRoutes = await _routesRepository.GetAllRoutesAsync();
+            Dictionary<PlanetIdentifier, HashSet<Edge>> planetToEdgesDictionary = new();
+            foreach (var route in allRoutes)
+            {
+                var (origin, destination, travelTime) = route;
+                Edge newEdge = new(destination, travelTime);
+                if (planetToEdgesDictionary.TryGetValue(origin, out var edgeSet))
+                {
+                    edgeSet.Add(newEdge);
+                }
+                else
+                {
+                    planetToEdgesDictionary.Add(origin, new HashSet<Edge> { newEdge });
+                }
+            }
+
             var countdown = scenario.Countdown;
             var (maxAutonomy, departure, arrival) = _milleniumFalconInformation;
 
@@ -28,8 +44,16 @@ namespace MFC.Domain.Runners
             Queue<Itinerary> itineraries = new();
             itineraries.Enqueue(new(maxAutonomy, countdown, departure, 0));
 
+            var maxQueueSize = 0;
+            var numberOfLoops = 0;
             do
             {
+                numberOfLoops++;
+                if (maxQueueSize < itineraries.Count)
+                {
+                    maxQueueSize = itineraries.Count;
+                }
+
                 var itinerary = itineraries.Dequeue();
 
                 // Are we on a planet with bounty hunters?
@@ -76,20 +100,24 @@ namespace MFC.Domain.Runners
                 }
                 itineraries.Enqueue(stayPutAndRefuelItinerary);
 
-                var routesFromThisPlanet = await _routesRepository.GetRoutesAsync(itinerary.CurrentPlanet);
-                foreach (var route in routesFromThisPlanet)
+                if (!planetToEdgesDictionary.TryGetValue(itinerary.CurrentPlanet, out var edges))
                 {
-                    if (route.TravelTime > itinerary.AutonomyLeft)
+                    throw new Exception($"Unexpected planet '{itinerary.CurrentPlanet}'.");
+                }
+
+                foreach (var edge in edges)
+                {
+                    if (edge.TravelTime > itinerary.AutonomyLeft)
                     {
                         // Not enough autonomy to reach next planet
                         continue;
                     }
 
-                    PlanetIdentifier nextPlanet = itinerary.CurrentPlanet == route.Origin ? route.Destination : route.Origin;
+                    PlanetIdentifier nextPlanet = edge.Identifier;
                     var moveToPlanetItinerary = DeepCopy(itinerary);
                     moveToPlanetItinerary.CurrentPlanet = nextPlanet;
-                    moveToPlanetItinerary.DaysLeft -= route.TravelTime;
-                    moveToPlanetItinerary.AutonomyLeft -= route.TravelTime;
+                    moveToPlanetItinerary.DaysLeft -= edge.TravelTime;
+                    moveToPlanetItinerary.AutonomyLeft -= edge.TravelTime;
                     if (bountyHunterEncounter)
                     {
                         moveToPlanetItinerary.BountyHunterEncounters++;
@@ -100,17 +128,13 @@ namespace MFC.Domain.Runners
             }
             while (itineraries.Count > 0);
 
-            if (possibleSolutions.Any())
-            {
-                return possibleSolutions.Select(s =>
-                {
-                    return CalculateSuccessProbability(s.BountyHunterEncounters);
-                }).Max();
-            }
-            else
-            {
-                return 0;
-            }
+            _logger.LogInformation($"LoopsNumber({numberOfLoops})Max queue size ({maxQueueSize}).");
+
+            return possibleSolutions.Any()
+                ? possibleSolutions
+                    .Select(s => CalculateSuccessProbability(s.BountyHunterEncounters))
+                    .Max()
+                : 0;
         }
 
         private static Itinerary DeepCopy(Itinerary original)
@@ -136,32 +160,6 @@ namespace MFC.Domain.Runners
             }
 
             return 1 - failureProbability;
-        }
-
-        private interface IAction { }
-        private record StayPut(PlanetIdentifier Planet) : IAction;
-        private record StayPutAndRefuel(PlanetIdentifier Planet) : IAction;
-        private record MoveTo(PlanetIdentifier Planet, int TravelTime) : IAction;
-
-        private record Itinerary
-        {
-            public int AutonomyLeft { get; set; }
-            public int DaysLeft { get; set; }
-            public int DaysPassed => 8 - DaysLeft;
-            public PlanetIdentifier CurrentPlanet { get; set; }
-            public int BountyHunterEncounters { get; set; }
-
-            public Itinerary(
-                int autonomyLeft,
-                int daysLeft,
-                PlanetIdentifier currentPlanet,
-                int bountyHunterEncounters)
-            {
-                AutonomyLeft = autonomyLeft;
-                DaysLeft = daysLeft;
-                CurrentPlanet = currentPlanet;
-                BountyHunterEncounters = bountyHunterEncounters;
-            }
         }
     }
 }

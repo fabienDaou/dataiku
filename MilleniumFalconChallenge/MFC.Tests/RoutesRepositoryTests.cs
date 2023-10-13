@@ -17,7 +17,7 @@ namespace MFC.Tests
         public async Task DoesPlanetExistAsync_Exists_ReturnTrue(string planet, bool exists)
         {
             // Arrange
-            var sut = new RoutesRepository(new TestsDbContextFactory());
+            var sut = new RoutesRepository(new RoutesDbContextFactory("universe.db"));
 
             // Act
             var result = await sut.DoesPlanetExistsAsync(planet);
@@ -30,7 +30,7 @@ namespace MFC.Tests
         public async Task GetRoutesAsync_WhenCalled_ReturnsAllRoutes()
         {
             // Arrange
-            var sut = new RoutesRepository(new TestsDbContextFactory());
+            var sut = new RoutesRepository(new RoutesDbContextFactory("universe.db"));
 
             // Act
             var result = await sut.GetRoutesAsync("Tatooine");

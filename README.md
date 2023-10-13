@@ -69,6 +69,46 @@ Details about the scenarios are stored in an in memory database.
 Because I used EntityFramework, it would be easy to configure another relational database.
 In the same spirit, database access is done in classes implementing interfaces. In case, we need to evolve to another kind of persistence (NoSQL database, MongoDb for example). Implementation would be pretty trivial.
 
+## Best odds algorithm
+First thoughts were about using some kind of path finding algorithm. I considered Dijkstra that can give use the shortest path and somehow put some weights also on the odds of encoutering bounty hunters. But I could not prove this would give me the best solution everytime.
+Therefore I went ahead and considered all possible scenarios when on a planet (staying put, refueling, moving to all nearby planets). Initially, the structure holding the unfinished itinerary was a queue. And it was growing large fast, so I was worried about RAM usage. I thought there must be quite some overlapping states, so I changed it to a hash set which greatly improved metrics such as: max size of set and number of loops.
+
+```
+example1
+  queue
+    max size 514
+    loop 1044
+  hashset
+    max size 18
+    loop 38
+
+example2
+  queue
+    max size 1026
+    loop 2134
+  hashset
+    max size 21
+    loop 62
+
+example3
+  queue
+    max size 2050
+    loop 4382
+  hashset
+    max size 24
+    loop 99
+
+example4
+  queue
+    max size 4098
+    loop 9038
+  hashset
+    max size 27
+    loop 150
+```
+
+Other possible improvements could be to consider that the graph is shrinking as days pass. All itineraries in planets that are not in the subgraph are not considered anymore.
+
 # Limitations and thoughts about future development
 ## Frontend
 ### Pagination

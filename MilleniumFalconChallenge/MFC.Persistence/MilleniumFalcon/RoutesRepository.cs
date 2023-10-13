@@ -29,5 +29,14 @@ namespace MFC.Persistence.MilleniumFalcon
                 .Select(r => new Route(r.Origin, r.Destination, r.TravelTime))
                 .ToListAsync();
         }
+
+        public Task<List<Route>> GetAllRoutesAsync()
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return context
+                .Routes
+                .Select(r => new Route(r.Origin, r.Destination, r.TravelTime))
+                .ToListAsync();
+        }
     }
 }

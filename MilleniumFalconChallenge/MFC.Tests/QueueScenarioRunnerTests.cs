@@ -6,7 +6,7 @@ using Xunit;
 
 namespace MFC.Tests
 {
-    public class ScenarioRunnerTests
+    public class QueueScenarioRunnerTests
     {
         private static readonly Scenario _example1 = new(1, "", 7, null, new BountyHunter[]
         {
@@ -40,11 +40,11 @@ namespace MFC.Tests
         public async Task RunAsync_Example1_CalculateBestProbability()
         {
             // Arrange
-            var routesRepository = new RoutesRepository(new TestsDbContextFactory());
+            var routesRepository = new RoutesRepository(new RoutesDbContextFactory("universe.db"));
             var loader = new MilleniumFalconConfigurationLoader(NullLoggerFactory.Instance);
             var conf = loader.Load(Path.Combine("Example1", "millenium-falcon.json"));
             var info = new MilleniumFalconInformation(conf!.Autonomy, conf.Departure, conf.Arrival);
-            var sut = new ScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
+            var sut = new QueueScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
 
             // Act
             var probability = await sut.RunAsync(_example1);
@@ -57,11 +57,11 @@ namespace MFC.Tests
         public async Task RunAsync_Example2_CalculateBestProbability()
         {
             // Arrange
-            var routesRepository = new RoutesRepository(new TestsDbContextFactory());
+            var routesRepository = new RoutesRepository(new RoutesDbContextFactory("universe.db"));
             var loader = new MilleniumFalconConfigurationLoader(NullLoggerFactory.Instance);
             var conf = loader.Load(Path.Combine("Example1", "millenium-falcon.json"));
             var info = new MilleniumFalconInformation(conf!.Autonomy, conf.Departure, conf.Arrival);
-            var sut = new ScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
+            var sut = new QueueScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
 
             // Act
             var probability = await sut.RunAsync(_example2);
@@ -74,11 +74,11 @@ namespace MFC.Tests
         public async Task RunAsync_Example3_CalculateBestProbability()
         {
             // Arrange
-            var routesRepository = new RoutesRepository(new TestsDbContextFactory());
+            var routesRepository = new RoutesRepository(new RoutesDbContextFactory("universe.db"));
             var loader = new MilleniumFalconConfigurationLoader(NullLoggerFactory.Instance);
             var conf = loader.Load(Path.Combine("Example1", "millenium-falcon.json"));
             var info = new MilleniumFalconInformation(conf!.Autonomy, conf.Departure, conf.Arrival);
-            var sut = new ScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
+            var sut = new QueueScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
 
             // Act
             var probability = await sut.RunAsync(_example3);
@@ -91,11 +91,11 @@ namespace MFC.Tests
         public async Task RunAsync_Example4_CalculateBestProbability()
         {
             // Arrange
-            var routesRepository = new RoutesRepository(new TestsDbContextFactory());
+            var routesRepository = new RoutesRepository(new RoutesDbContextFactory("universe.db"));
             var loader = new MilleniumFalconConfigurationLoader(NullLoggerFactory.Instance);
             var conf = loader.Load(Path.Combine("Example1", "millenium-falcon.json"));
             var info = new MilleniumFalconInformation(conf!.Autonomy, conf.Departure, conf.Arrival);
-            var sut = new ScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
+            var sut = new QueueScenarioRunner(routesRepository, info, NullLoggerFactory.Instance);
 
             // Act
             var probability = await sut.RunAsync(_example4);
