@@ -20,10 +20,10 @@ COPY MilleniumFalconChallenge/. .
 RUN dotnet build MilleniumFalconChallenge.sln -c Release
 
 FROM build AS publish
-RUN dotnet publish MilleniumFalconChallenge.Api/MilleniumFalconChallenge.Api.csproj -c Release --no-build -o /app/webapp
+RUN dotnet publish MFC.Api/MFC.Api.csproj -c Release --no-build -o /app/webapp
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS release
 WORKDIR /app
 COPY --chown=millenium:millenium --chmod=u=rX,g=rX --from=publish /app/webapp .
 USER 1000
-ENTRYPOINT ["dotnet", "MilleniumFalconChallenge.Api.dll"]
+ENTRYPOINT ["dotnet", "MFC.Api.dll"]
