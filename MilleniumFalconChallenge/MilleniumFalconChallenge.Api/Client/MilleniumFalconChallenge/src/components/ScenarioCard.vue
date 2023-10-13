@@ -2,7 +2,7 @@
   <v-card class="mx-auto" max-width="800" variant="outlined">
     <v-card-text>
       <div v-if="!isProcessing" class="text-h3 mb-1">
-        {{ probability }}
+        {{ probability! * 100 }}
         <v-icon class="text-h3 mb-1" icon="mdi-percent"></v-icon>
       </div>
       <div v-else class="text-h3 mb-1">Processing...</div>
