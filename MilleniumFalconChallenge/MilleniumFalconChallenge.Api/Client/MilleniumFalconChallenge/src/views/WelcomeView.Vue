@@ -13,6 +13,7 @@
         append-inner-icon="mdi-send"
         v-model="playerName"
         @click:append-inner="goNextView"
+        @keydown.enter.prevent="goNextView"
       ></v-text-field>
     </v-card-actions>
   </v-card>
