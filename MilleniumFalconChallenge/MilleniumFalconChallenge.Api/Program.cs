@@ -32,7 +32,7 @@ builder.Services.AddSingleton(sp =>
     var conf = sp.GetRequiredService<MilleniumFalconConfiguration>();
     return new MilleniumFalconInformation(conf.Autonomy, conf.Departure, conf.Arrival);
 });
-builder.Services.AddSingleton<IScenarioRunner, DijkstraScenarioRunner>();
+builder.Services.AddSingleton<IScenarioRunner, ScenarioRunner>();
 builder.Services.AddSingleton<ScenarioRepository, ScenarioRepository>();
 builder.Services.AddSingleton<IReadOnlyScenarioRepository, ScenarioRepository>();
 builder.Services.AddSingleton<IScenarioRepository, ScenarioRepository>();

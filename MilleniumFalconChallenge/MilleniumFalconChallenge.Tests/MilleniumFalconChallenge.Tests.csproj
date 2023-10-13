@@ -10,10 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Example1\millenium-falcon.json" />
     <None Remove="universe.db" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Example1\millenium-falcon.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="universe.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -31,6 +35,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MilleniumFalconChallenge.Persistence\MilleniumFalconChallenge.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Example2\" />
   </ItemGroup>
 
 </Project>
