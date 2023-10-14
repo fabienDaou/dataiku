@@ -29,11 +29,19 @@ namespace MFC.Persistence.MilleniumFalcon
 
             try
             {
-                return JsonConvert.DeserializeObject<MilleniumFalconConfiguration>(File.ReadAllText(path),
+                var conf = JsonConvert.DeserializeObject<MilleniumFalconConfiguration>(File.ReadAllText(path),
                     new JsonSerializerSettings
                     {
                         MissingMemberHandling = MissingMemberHandling.Error
                     });
+
+                if (conf != null && !Path.IsPathRooted(conf.RoutesDbPath))
+                {
+                    conf.RoutesDbPath = Path.Combine(Path.GetDirectoryName(path), conf.RoutesDbPath);
+                }
+
+                return conf;
+
             }
             catch (JsonSerializationException ex)
             {

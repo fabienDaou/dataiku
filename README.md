@@ -8,7 +8,10 @@ At the root of the repository:
 docker-compose up
 ```
 Then you can access the web app at **http://localhost:38190/**
+
+If you want to specify a link to a different **millennium-falcon.json** file, you can change the docker compose (check the comments). A volume needs to be mounted with the files necessary.
 ## CLI
+Different builds for different targets are available in the **build** folder.
 ## Code
 - **Webapp** code is in **MilleniumFalconChallenge/MFC.Api** folder.
 - **CLI** code is in **MilleniumFalconChallenge/MFC.CmdLine** folder.

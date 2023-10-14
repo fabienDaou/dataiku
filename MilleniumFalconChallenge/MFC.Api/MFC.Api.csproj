@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
+    <Platforms>AnyCPU;x64;x86;ARM64</Platforms>
+    <Configurations>Debug;Release</Configurations>
+
     <SpaRoot>Client\MilleniumFalconChallenge\</SpaRoot>
   </PropertyGroup>
 

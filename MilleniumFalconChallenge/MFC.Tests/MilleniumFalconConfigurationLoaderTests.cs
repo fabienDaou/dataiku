@@ -39,7 +39,7 @@ namespace MFC.Tests
                 Assert.Equal(6, result.Autonomy);
                 Assert.Equal("Tatooine", result.Departure);
                 Assert.Equal("Endor", result.Arrival);
-                Assert.Equal("universe.db", result.RoutesDbPath);
+                Assert.Equal(Path.Combine(Environment.CurrentDirectory, "universe.db"), result.RoutesDbPath);
             }
             finally
             {
@@ -100,7 +100,7 @@ namespace MFC.Tests
                 Assert.Equal(6, result.Autonomy);
                 Assert.Equal("Tatooine", result.Departure);
                 Assert.Equal("Endor", result.Arrival);
-                Assert.Equal("universe.db", result.RoutesDbPath);
+                Assert.Equal(Path.Combine(Environment.CurrentDirectory, "universe.db"), result.RoutesDbPath);
             }
             finally
             {
