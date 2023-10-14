@@ -7,8 +7,8 @@ At the root of the repository:
 ```
 docker-compose up
 ```
-Then you can access the web app at **http://localhost:38190/**
-The open api specification of the api is at ****
+Then you can access the web app at **http://localhost:38190/**.
+The open api specification of the api is at **http://localhost:38190/swagger/index.html**.
 
 If you want to specify a link to a different **millennium-falcon.json** file, you can change the docker compose (check the comments). A volume needs to be mounted with the files necessary.
 ## CLI
@@ -22,7 +22,7 @@ They share libraries (these are the other folders).
 - MFC.Persistence is code related to database and file access.
 - MFC.Domain is code related to the overall business logic, it has no dependencies.
 ## CI
-I used github actions, they build and run backend tests on each commit. See in **.github/workflows/dotnet.yml**.
+I used github actions, they build back and frontend, run tests and build a docker image on each commit. See in **.github/workflows/dotnet.yml**.
 
 # What I wanted to demonstrate with this test
 - Build a solution that meets the minimum setup bar of what I consider a professional project.
@@ -33,7 +33,7 @@ I used github actions, they build and run backend tests on each commit. See in *
     - some basic architecture documentation and motivations behind decisions
 
 # Thought process
-From a high level view, this is an application hosting a feature that can, in extreme cases (number of planets for example), require quite some CPU and RAM resources. While a monolithic application is plenty enough for this test, I want to propose an approach that could lead us to "easily" move towards a more distributed architecture. It would have the benefit of increasing the availability and scalability of the application.
+From a high level view, this is an application hosting a feature that can, in extreme cases (number of planets for example), require quite some CPU and RAM resources. While a monolithic application is plenty enough for this test, I want to propose an approach that could allow us to "easily" move towards a more distributed architecture. It would have the benefit of increasing the availability and scalability of the application.
 A great tool for this is Akka .Net. This is an implementation of the actor model for .Net. It allows developers to structure and split their application from the get-go as an event-driven applications while still keeping the operational simplicity of a monolithic application. Once scalability requirements evolve, it is pretty easy to move these actors in different services and benefit from horizontal scalability.
 
 In our case, the actors actually doing the work are instanciated in the web server but could very well be moved to specific compute instances while not changing much in the code except some akka configuration to enable remoting or clustering depending on the choice made at this point.
@@ -41,7 +41,7 @@ In our case, the actors actually doing the work are instanciated in the web serv
 # Architecture
 Frontend is a SPA developed with Vue3, TypeScript. Split into components to help with reusability.
 
-Backend is a monolithic application. An API is available to create and list scenarios.
+Backend is a monolithic application with an hexagonal architecture. An HTTP API is available to create and list scenarios.
 Scenarios sent for processing enter the actor model realm. They are queued for processing and picked up when resources are available. One actor is responsible to keep track of the workers available and the scenarios to process (called supervisor later).
 
 Persistence wise, I considered the sqlite database as a readonly resource. I used a different relational database to store information regarding scenarios.
@@ -54,7 +54,7 @@ Table BountyHunter (Id:PK, Planet:string, Day:int)
 BountyHunter has a ForeignKey constraint on Scenario:Id.
 ```
 
-**For simplicity**, this is an in-memory relational database, so if you restart the webapp, you will lose your scenarios. Because I used a well known ORM (EntityFramework), it is easy to use a different relational database. Likewise, another type of storage could be used (NoSql (I considered MongoDb to store scenario but found it faster to use the in memory db)).
+**For simplicity**, this is an in-memory relational database, so if you restart the webapp, you will lose your scenarios. Because I used a well known ORM (EntityFramework), it is easy to use a different relational database. Likewise, another type of storage could easily be used (NoSql (I considered MongoDb to store scenario but found it faster to use the in memory db)) as business logic does not depend on data access constraints.
 However, having a different storage for scenarios prevent me from creating relations between the routes and the planets of the bounty hunters which could lead to invalid scenarios being accepted (scenario with an unknown planet). I added validation for this, but in a context of a team or simply the addition of a bug in the validation it could lead to corrupt data (unit tests help here to have some guarantee).
 
 ## Best odds algorithm
