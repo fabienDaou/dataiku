@@ -8,6 +8,7 @@ At the root of the repository:
 docker-compose up
 ```
 Then you can access the web app at **http://localhost:38190/**
+The open api specification of the api is at ****
 
 If you want to specify a link to a different **millennium-falcon.json** file, you can change the docker compose (check the comments). A volume needs to be mounted with the files necessary.
 ## CLI
@@ -53,29 +54,12 @@ Table BountyHunter (Id:PK, Planet:string, Day:int)
 BountyHunter has a ForeignKey constraint on Scenario:Id.
 ```
 
-**For simplicity**, this is an in-memory relational database, so if you restart the webapp, you will lose your scenarios. Because I used a well known ORM (EntityFramework), it is easy to use a different relational database. However, this prevents me from creating relations between the routes and the planets of the bounty hunters which could lead to invalid scenarios being accepted (scenario with an unknown planet). I added validation for this, but in a context of a team or simply the addition of a bug in the validation it could lead to corrupt data (unit tests help here to have some guarantee).
-
-# Technologies used
-## WebServer
-- AspNetCore, .Net6
-- Akka .Net
-- Entity Framework (ORM)
-## Front
-- Vue3
-- VueRouter, for view navigation
-- Vuex, for state management
-- Vuetify, component library
-- TypeScript
-
-## Backend architecture
-This is a monolithic application.
-Details about the scenarios are stored in an in memory database.
-Because I used EntityFramework, it would be easy to configure another relational database.
-In the same spirit, database access is done in classes implementing interfaces. In case, we need to evolve to another kind of persistence (NoSQL database (I considered MongoDb to store scenario but found it faster to use the in memory db). Implementation would be pretty trivial.
+**For simplicity**, this is an in-memory relational database, so if you restart the webapp, you will lose your scenarios. Because I used a well known ORM (EntityFramework), it is easy to use a different relational database. Likewise, another type of storage could be used (NoSql (I considered MongoDb to store scenario but found it faster to use the in memory db)).
+However, having a different storage for scenarios prevent me from creating relations between the routes and the planets of the bounty hunters which could lead to invalid scenarios being accepted (scenario with an unknown planet). I added validation for this, but in a context of a team or simply the addition of a bug in the validation it could lead to corrupt data (unit tests help here to have some guarantee).
 
 ## Best odds algorithm
-First thoughts were about using some kind of path finding algorithm. I considered Dijkstra that can give use the shortest path and somehow put some weights also on the odds of encoutering bounty hunters. But I could not prove this would give me the best solution everytime.
-Therefore I went ahead and considered all possible scenarios when on a planet (staying put, refueling, moving to all nearby planets). Initially, the structure holding the unfinished itineraries was a queue. And it was growing large fast, so I was worried about RAM usage. I thought there must be quite some overlapping states, so I changed it to a hash set which greatly improved metrics such as: max size of set and number of loops.
+First thoughts were using some kind of path finding algorithm. I considered Dijkstra that can give use the shortest path and somehow put some weights also on the odds of encoutering bounty hunters. But I could not prove this would give me the best solution everytime.
+Therefore I went ahead and considered all possible scenarios when on a planet (staying put, refueling, moving to all nearby planets). Initially, the structure holding the unfinished itineraries was a queue. And it was growing large fast, so I was worried about RAM usage. I noticed there must be quite some overlapping states, so I changed it to a hash set which greatly improved metrics such as: max size of set and number of loops. Check the following:
 
 ```
 example1
@@ -113,29 +97,41 @@ example4
 
 Other possible improvements could be to consider that the graph is shrinking as days pass. All itineraries in planets that are not in the subgraph are not considered anymore.
 
+# Technologies used
+## WebServer
+- AspNetCore, .Net6
+- Akka .Net
+- Entity Framework (ORM)
+## Front
+- Vue3
+- VueRouter, for view navigation
+- Vuex, for state management
+- Vuetify, component library
+- TypeScript
+
 # Limitations and thoughts about future development
 ## Frontend
-### Pagination
-Api allows pagination, but I did not handle it in the front. I just specified a large page size.
+### Scenarios pagination
+Scenarios pagination is available API wise, but I did not add it in the front. I just specified a large page size.
 ### WebSocket instead of polling
 At the moment, I do polling every two seconds to get the latest updates regarding scenarios.
 We could use WebSocket later on.
 ### Frontend composability
-I created two views and some components. In the eventuality, there is mode development made on this project, it would be interesting thinking about building a design system for this application -> more consistence and reusability.
+I created two views and some components. In the eventuality, there is more development made on this project, it would be interesting thinking about building a design system for this application -> more consistence and reusability.
 ## Backend
 ### Error handling
-There is a lack of proper error handling. I focused more on validation of inputs rather than error handling as it is quite time consuming. But in real life application, transient errors can happen (temporary network issue, so you have to handle those).
+There is a lack of advanced error handling. I focused more on validation of inputs, and their tests, rather than error handling as it is quite time consuming. But in real life application, transient errors can happen (temporary network issue, so you have to handle those).
 ### Towards a distributed system
 **In the current situation, the supervisor is a SPOF (single point of failure).**
 In Akka cluster, this is a singleton. The reality is that the migration of this singleton actor from one instance to the other is almost instant (by experience, it is a matter of ms), plus it seems (would have to test) there is some level of buffering of messages that could not be posted so no messages are lost.
 
 To completely remedy the issue, we can think of using a dedicated system (Redis as a queue for example) to keep the queue and several supervisors could pick up work in this queue making it more resilient.
 ## Multi tenancy
-At the moment, there is no authentication or authorization. Every users see the scenarios of all the other users. This leads to a lot of things to consider, especially regarding security.
+At the moment, there is no authentication or authorization. Every users see the scenarios of all the other users. This leads to a lot of things to consider, especially regarding security and data access:
 
-Passwords:
+Passwords management:
 - hash them with a salt
-- pick a hash recommended by OWASP (pbkdf2 for example)
+- pick a hash  algortihm recommended by OWASP (pbkdf2 for example)
 - hash compute to compare passwords should be made constant whether passwords are the same or not (this prevents timing attacks).
 
 CSRF: implement anti forgery tokens
