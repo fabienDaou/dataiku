@@ -32,7 +32,7 @@ namespace MFC.Persistence.MilleniumFalcon
                 return JsonConvert.DeserializeObject<MilleniumFalconConfiguration>(File.ReadAllText(path),
                     new JsonSerializerSettings
                     {
-                        MissingMemberHandling = MissingMemberHandling.Error,
+                        MissingMemberHandling = MissingMemberHandling.Error
                     });
             }
             catch (JsonSerializationException ex)

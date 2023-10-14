@@ -2,7 +2,7 @@
   "profiles": {
     "MilleniumFalconChallenge.CmdLine": {
       "commandName": "Project",
-      "commandLineArgs": "toto.json tata.json"
+      "commandLineArgs": "millennium-falcon.json example4.json"
     }
   }
 }
