@@ -4,6 +4,7 @@ using MFC.Domain;
 using MFC.Domain.Runners;
 using MFC.Persistence.MilleniumFalcon;
 using MFC.Persistence.Scenarios;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
@@ -92,6 +93,22 @@ if (builder.Environment.IsDevelopment())
 }
 
 var app = builder.Build();
+
+app.UseExceptionHandler(builder =>
+{
+    builder.Run(context =>
+    {
+        var logger =
+            context.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger("excepationhandler");
+        var exHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
+        var exception = exHandlerFeature?.Error;
+
+        logger.LogError(exception, "Unhandled error.");
+
+        context.Response.StatusCode = 500;
+        return Task.CompletedTask;
+    });
+});
 
 app.UseSwagger();
 app.UseSwaggerUI();
