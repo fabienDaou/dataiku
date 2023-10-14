@@ -28,7 +28,7 @@ I used github actions, they build and run backend tests on each commit. See in *
     - some basic architecture documentation and motivations behind decisions
 
 # Thought process
-From a high level view, this is an application hosting a feature that can, in extreme cases (number of planets for example), require quite some CPU resources. While a monolithic application is plenty enough for this test, I want to propose an approach that could lead us to "easily" move towards a more distributed architecture. It would have the benefit of increasing the availability and scalability of the application.
+From a high level view, this is an application hosting a feature that can, in extreme cases (number of planets for example), require quite some CPU and RAM resources. While a monolithic application is plenty enough for this test, I want to propose an approach that could lead us to "easily" move towards a more distributed architecture. It would have the benefit of increasing the availability and scalability of the application.
 A great tool for this is Akka .Net. This is an implementation of the actor model for .Net. It allows developers to structure and split their application from the get-go as an event-driven applications while still keeping the operational simplicity of a monolithic application. Once scalability requirements evolve, it is pretty easy to move these actors in different services and benefit from horizontal scalability.
 
 In our case, the actors actually doing the work are instanciated in the web server but could very well be moved to specific compute instances while not changing much in the code except some akka configuration to enable remoting or clustering depending on the choice made at this point.
@@ -53,25 +53,25 @@ BountyHunter has a ForeignKey constraint on Scenario:Id.
 
 # Technologies used
 ## WebServer
-AspNetCore, .Net6
-Akka .Net
-Entity Framework (ORM)
+- AspNetCore, .Net6
+- Akka .Net
+- Entity Framework (ORM)
 ## Front
-Vue3
-VueRouter, for view navigation
-Vuex, for state management
-Vuetify, component library
-TypeScript
+- Vue3
+- VueRouter, for view navigation
+- Vuex, for state management
+- Vuetify, component library
+- TypeScript
 
 ## Backend architecture
 This is a monolithic application.
 Details about the scenarios are stored in an in memory database.
 Because I used EntityFramework, it would be easy to configure another relational database.
-In the same spirit, database access is done in classes implementing interfaces. In case, we need to evolve to another kind of persistence (NoSQL database, MongoDb for example). Implementation would be pretty trivial.
+In the same spirit, database access is done in classes implementing interfaces. In case, we need to evolve to another kind of persistence (NoSQL database (I considered MongoDb to store scenario but found it faster to use the in memory db). Implementation would be pretty trivial.
 
 ## Best odds algorithm
 First thoughts were about using some kind of path finding algorithm. I considered Dijkstra that can give use the shortest path and somehow put some weights also on the odds of encoutering bounty hunters. But I could not prove this would give me the best solution everytime.
-Therefore I went ahead and considered all possible scenarios when on a planet (staying put, refueling, moving to all nearby planets). Initially, the structure holding the unfinished itinerary was a queue. And it was growing large fast, so I was worried about RAM usage. I thought there must be quite some overlapping states, so I changed it to a hash set which greatly improved metrics such as: max size of set and number of loops.
+Therefore I went ahead and considered all possible scenarios when on a planet (staying put, refueling, moving to all nearby planets). Initially, the structure holding the unfinished itineraries was a queue. And it was growing large fast, so I was worried about RAM usage. I thought there must be quite some overlapping states, so I changed it to a hash set which greatly improved metrics such as: max size of set and number of loops.
 
 ```
 example1
@@ -120,7 +120,7 @@ We could use WebSocket later on.
 I created two views and some components. In the eventuality, there is mode development made on this project, it would be interesting thinking about building a design system for this application -> more consistence and reusability.
 ## Backend
 ### Error handling
-There is a lack of proper error handling. I focused more on validation of inputs rather than error handling as it is quite time consuming.
+There is a lack of proper error handling. I focused more on validation of inputs rather than error handling as it is quite time consuming. But in real life application, transient errors can happen (temporary network issue, so you have to handle those).
 ### Towards a distributed system
 **In the current situation, the supervisor is a SPOF (single point of failure).**
 In Akka cluster, this is a singleton. The reality is that the migration of this singleton actor from one instance to the other is almost instant (by experience, it is a matter of ms), plus it seems (would have to test) there is some level of buffering of messages that could not be posted so no messages are lost.
