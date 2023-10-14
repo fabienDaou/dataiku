@@ -10,5 +10,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:38190
+      - MILLENIUMFALCONPATH=/app/millennium-falcon.json
+    # Example configuration for configurable configuration
+    # Don't forget to update "routes_db" path
+    #   - MILLENIUMFALCONPATH=/data/example1/millennium-falcon.json
+    # volumes:
+    #   - {PathToDataikuRepository}\millenium-falcon-challenge\examples:/data
     ports:
       - 38190:38190
