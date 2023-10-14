@@ -1,4 +1,5 @@
 ![Build/test](https://github.com/fabienDaou/dataiku/actions/workflows/dotnet.yml/badge.svg)
+![Build docker image](https://github.com/fabienDaou/dataiku/actions/workflows/docker-image.yml/badge.svg)
 
 # General informations
 ## WebApp
