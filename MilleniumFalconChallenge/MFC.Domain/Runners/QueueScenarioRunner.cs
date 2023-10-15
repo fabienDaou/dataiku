@@ -56,18 +56,6 @@ namespace MFC.Domain.Runners
 
                 var itinerary = itineraries.Dequeue();
 
-                // Are we on a planet with bounty hunters?
-                var bountyHunterEncounter = false;
-                foreach (var bountyHunter in scenario.BountyHunters)
-                {
-                    if (bountyHunter.Planet == itinerary.CurrentPlanet
-                        && countdown - itinerary.DaysLeft == bountyHunter.Day)
-                    {
-                        bountyHunterEncounter = true;
-                        break;
-                    }
-                }
-
                 // Late, it is not a possible solution.
                 if (itinerary.DaysLeft < 0)
                 {
@@ -80,6 +68,12 @@ namespace MFC.Domain.Runners
                     possibleSolutions.Add(itinerary);
                     continue;
                 }
+
+                // Are we on a planet with bounty hunters?
+                var bountyHunterEncounter =
+                    scenario.BountyHunters.Any(bh =>
+                        bh.Planet == itinerary.CurrentPlanet
+                        && countdown - itinerary.DaysLeft == bh.Day);
 
                 // StayPut: one day spent on the same planet
                 var stayPutItinerary = DeepCopy(itinerary);

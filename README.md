@@ -21,6 +21,7 @@ They share libraries (these are the other folders).
 - MFC.Actors is code related to actors communicating to get the scenarios processes.
 - MFC.Persistence is code related to database and file access.
 - MFC.Domain is code related to the overall business logic, it has no dependencies.
+- MFC.Benchmark is code I used to benchmark several implementations (it considers memory (different generations), time spent, and allocations).
 ## CI
 I used github actions, they build back and frontend, run tests and build a docker image on each commit. See in **.github/workflows/dotnet.yml**.
 
@@ -94,8 +95,22 @@ example4
     max size 27
     loop 150
 ```
-
-Other possible improvements could be to consider that the graph is shrinking as days pass. All itineraries in planets that are not in the subgraph are not considered anymore.
+and the benchmark results:
+```
+| Method   | runners | example  | Mean     | Error   | StdDev  | Gen0    | Gen1    | Allocated  |
+|--------- |-------- |--------- |---------:|--------:|--------:|--------:|--------:|-----------:|
+| RunAsync | hashset | example1 | 148.8 us | 2.62 us | 2.19 us |  5.6152 |  0.7324 |    70.7 KB |
+| RunAsync | hashset | example2 | 155.2 us | 1.69 us | 1.49 us |  6.1035 |  0.7324 |   75.08 KB |
+| RunAsync | hashset | example3 | 159.6 us | 1.57 us | 1.31 us |  6.5918 |  0.7324 |   82.04 KB |
+| RunAsync | hashset | example4 | 171.1 us | 2.18 us | 2.03 us |  7.3242 |  0.9766 |   91.85 KB |
+| RunAsync | queue   | example1 | 193.5 us | 1.42 us | 1.11 us | 14.8926 |  1.7090 |  183.52 KB |
+| RunAsync | queue   | example2 | 245.4 us | 1.61 us | 1.34 us | 24.9023 |  3.9063 |  309.32 KB |
+| RunAsync | queue   | example3 | 358.0 us | 2.80 us | 2.34 us | 45.8984 |  9.7656 |  568.06 KB |
+| RunAsync | queue   | example4 | 585.0 us | 2.83 us | 2.51 us | 89.8438 | 24.4141 | 1103.04 KB |
+```
+Other possible improvement that I did not have time to implement:
+When picking the next itinerary to process in the hashset, check if there are definitely better itineraries left in the hashset for this planet.
+If an itinerary has more or equal days left, more or equal autonomy and less or equal bounty hunters encounters, then it is not worth considering worst itineraries.
 
 # Technologies used
 ## WebServer
